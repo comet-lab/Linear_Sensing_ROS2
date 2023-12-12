@@ -1,0 +1,2 @@
+float64 strain
+float64 resistance
