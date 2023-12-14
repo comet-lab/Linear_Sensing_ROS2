@@ -182,6 +182,7 @@ class linearSensorPublisher(Node):
                 strain = float(string.replace('\r\n', ''))
                 msg.strain = strain
                 msg.resistance = data_R + strain + 1.0
+                msg.timestamp = time.time()
 
 
         self.publisher_.publish(msg)

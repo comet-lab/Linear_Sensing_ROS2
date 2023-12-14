@@ -13,10 +13,23 @@
 # limitations under the License.
 
 import rclpy
+import os
+import csv
 from rclpy.node import Node
 
 from std_msgs.msg import String
 from linear_sensor_msgs.msg import Strain
+
+def write_value(strain, R, timestamp):
+    # csv name and file path (NEED CHANGE FOR DIFFERENT TRAILS)
+    filename = 'test.csv'
+    path = '/home/wenpeng/Documents/ros2_ws/src/Linear_Sensing_ROS2/data'
+    file_path = os.path.join(path, filename)
+    data = [strain, R, timestamp]
+    with open(file_path, 'a', newline='') as file:
+        writer = csv.writer(file, delimiter=',')
+        writer.writerow(data)
+        print('value done')
 
 class linearSensorSubscriber(Node):
 
@@ -27,12 +40,26 @@ class linearSensorSubscriber(Node):
             'sensor_linear',
             self.listener_callback,
             10)
+        self.flag = False
+        self.t0 = 0
         self.subscription  # prevent unused variable warning
+        
+        
+        
 
     def listener_callback(self, msg):
+        if self.flag == False:
+            self.t0 = msg.timestamp
+            self.flag = True
+            # print('flag true')
         strain = msg.strain
         resistance = msg.resistance
-        print(f'Strain: {strain}, Resistance: {resistance} \n')
+        tstamp = msg.timestamp
+        # print(self.t0)
+        timenow = round(tstamp-self.t0,2)
+        print(f'Strain: {strain}, Resistance: {resistance}, time: {timenow} \n')
+        write_value(strain, resistance, timenow)
+        
 
 
 def main(args=None):
