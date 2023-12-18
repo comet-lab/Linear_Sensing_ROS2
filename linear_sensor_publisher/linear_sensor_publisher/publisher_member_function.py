@@ -22,6 +22,9 @@ import tkinter.messagebox
 import time
 import threading
 
+global line_1 
+global last_received1
+line_1, last_received1 = 0, 0
 
 ## Resistance Meter Package
 class Usb_rs:
@@ -130,7 +133,7 @@ def read_R():
 
     #Connect
     # print("Port?")
-    port = "/dev/ttyACM0"  
+    port = "/dev/ttyACM2"  
     # print("Speed?")
     speed = 9600
     if not serial1.open(port,speed):
@@ -156,7 +159,7 @@ def read_R():
 
 
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 
 class linearSensorPublisher(Node):
@@ -172,17 +175,14 @@ class linearSensorPublisher(Node):
 
     def timer_callback(self):
         msg = Strain()
-        line = ser.readline()   # read a byte
-        if line:
-            if (self.i <= 10):
-                self.i += 1
-            else:
-                string = line.decode()  # convert the byte string to a unicode string
-                # print(string)
-                strain = float(string.replace('\r\n', ''))
-                msg.strain = strain
-                msg.resistance = data_R + strain + 1.0
-                msg.timestamp = time.time()
+        if self.i <=10:
+            self.i += 1
+        else:
+            # print(line_1)
+            strain = float(line_1)
+            msg.strain = strain
+            msg.resistance = data_R
+            msg.timestamp = time.time()
 
 
         self.publisher_.publish(msg)
@@ -208,11 +208,18 @@ def main(args=None):
 
 ## Resistance value reading thread
 def thread_function(): 
+    global line_1, last_received1
+    buffer1 = ''
     global data_R
     while 1:
-        # data_R = read_R() # data read from resistance meter
-        data_R = 0 # test code without resistance meter
-        # print(data_R)
+        data = read_R() # data read from resistance meter
+        # data_R = 0 # test code without resistance meter
+        data_R = float(data)
+
+        buffer1 += ser.read(ser.inWaiting()).decode()
+        if '\n' in buffer1:
+            last_received1, buffer1 = buffer1.split('\n')[-2:]
+        line_1 = last_received1
 
 
 if __name__ == '__main__':
