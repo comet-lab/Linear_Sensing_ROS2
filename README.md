@@ -15,3 +15,8 @@ ros2 run linear_sensor_publisher linear_publisher
 ``
 ros2 run linear_sensor_publisher linear_subscriber
 ``
+
+# Serial Connection Sequence
+- Arduino for encoder
+- CTR control board
+- Resistance meter
