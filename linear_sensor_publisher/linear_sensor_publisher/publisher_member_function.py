@@ -134,7 +134,7 @@ def read_R():
     #Connect
     # print("Port?")
     port = "/dev/ttyACM2"  
-    # print("Speed?")
+    # print("Speed?")/dev/ttyACM2
     speed = 9600
     if not serial1.open(port,speed):
         return
@@ -142,7 +142,8 @@ def read_R():
     #Send and receive commands
 
         # print("Please enter the command (Exit with no input)")
-    command = "MEAS:RES?"
+    # command = "MEAS:RES?" # RM 3545 Commands
+    command = ":MEASure?" # RM 3536 Commands
         #Exit if no input
     # if command == "":
     #     break

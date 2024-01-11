@@ -22,7 +22,7 @@ from linear_sensor_msgs.msg import Strain
 
 def write_value(strain, R, timestamp):
     # csv name and file path (NEED CHANGE FOR DIFFERENT TRAILS)
-    filename = 'buckle_invSoft_Dec21.csv'
+    filename = 'testCAAR.csv'
     path = '/home/wenpeng/Documents/ros2_ws/src/Linear_Sensing_ROS2/data'
     file_path = os.path.join(path, filename)
     data = [strain, R, timestamp]
